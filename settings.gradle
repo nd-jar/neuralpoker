@@ -1,0 +1,5 @@
+rootProject.name = 'neuralpoker'
+include 'prepare'
+include 'card-recognizer'
+include 'common'
+
