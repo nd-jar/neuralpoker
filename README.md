@@ -1,5 +1,5 @@
 # Распознавание карт
-Домашнее задание для собеседования
+## Домашнее задание для собеседования
 ```text
 ## Техническое задание
 - Необходимо написать программу на Java, которая распознает, какие карты лежат на столе (только по центру картинки)
@@ -47,8 +47,13 @@
 Приложение берёт картинки из папки [./resources/imgs_marked](resources%2Fimgs_marked) и превращает их в 2 файла:
 - [./resources/learning/data_nums.csv](resources%2Flearning%2Fdata_nums.csv)
 - [./resources/learning/data_suits.csv](resources%2Flearning%2Fdata_suits.csv)
-Эти файлы это битовое изображение цифр (data_nums.csv) и мастей (data_suits.csv) вместе с результатом
-Пример:
+
+Csv-файлы являются битовым изображением цифр (data_nums.csv) и мастей (data_suits.csv). 
+
+Одна строчка - одна картинка
+
+Пример (используя вспомогательный метод [BitSetUtils#toAscii](prepare%2Fsrc%2Fmain%2Fjava%2Fnd%2Fjar%2Fneuralpoker%2Fprepare%2FBitSetUtils.java))
+
 ```text
 ....................................................................
 ....................................................................
@@ -69,3 +74,31 @@
 .........................@..........................................
 ....................................................................
 ```
+### 2. Learn
+
+Для обучения созданы две нейронные сети c 128 нейронами на скрытом слое.
+Каждая нейронная сеть принимает на вход csv с шага 1, обучается на ней и на выходе отдаёт 4 файла:
+- [num/b1.txt](card-recognizer%2Fsrc%2Fmain%2Fresources%2Fnum%2Fb1.txt), [suit/b1.txt](card-recognizer%2Fsrc%2Fmain%2Fresources%2Fsuit%2Fb1.txt) - bias скрытого слоя
+- [num/b2.txt](card-recognizer%2Fsrc%2Fmain%2Fresources%2Fnum%2Fb2.txt), [suit/b2.txt](card-recognizer%2Fsrc%2Fmain%2Fresources%2Fsuit%2Fb2.txt) - bias output слоя
+- [num/W1.txt](card-recognizer%2Fsrc%2Fmain%2Fresources%2Fnum%2FW1.txt), [suit/W1.txt](card-recognizer%2Fsrc%2Fmain%2Fresources%2Fsuit%2FW1.txt) - веса скрытого слоя
+- [num/W2.txt](card-recognizer%2Fsrc%2Fmain%2Fresources%2Fnum%2FW2.txt), [suit/W2.txt](card-recognizer%2Fsrc%2Fmain%2Fresources%2Fsuit%2FW2.txt) - веса output слоя
+
+### 3. Recognize
+## Алгоритм работы
+
+1. **Считываем веса и смещения из шага 2:**
+    - Веса (W1, W2) и смещения (b1, b2) загружаются из сохраненных файлов.
+
+2. **Преобразуем картинки в битовые массивы:**
+    - Для каждой карты изображения используется код, который преобразует изображение в битовый массив.
+
+3. **Магия:**
+    - Где $x = \{1, 0, 0, 1, ..., 1, 0\}$ - битовый массив карты.
+    - $W1$, $W2$ - матрицы весов. \begin{pmatrix}
+      -1.123 & 0.512 \\
+      123.123 & 0
+      \end{pmatrix}
+    - $b1$, $b2$ - векторы смещений.
+
+    1. Вычисляем $a1 = \text{relu}(x \cdot W1 + b1)$, где $\text{relu}(x) = \max(0, x)$.
+    2. Вычисляем $a2 = \text{sigmoid}(a1 \cdot W2 + b2)$, где $\text{sigmoid}(x) = \frac{1}{1 + e^{-x}}$.
