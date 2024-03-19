@@ -84,7 +84,6 @@ Csv-файлы являются битовым изображением цифр
 - [num/W2.txt](card-recognizer%2Fsrc%2Fmain%2Fresources%2Fnum%2FW2.txt), [suit/W2.txt](card-recognizer%2Fsrc%2Fmain%2Fresources%2Fsuit%2FW2.txt) - веса output слоя
 
 ### 3. Recognize
-## Алгоритм работы
 
 1. **Считываем веса и смещения из шага 2:**
     - Веса (W1, W2) и смещения (b1, b2) загружаются из сохраненных файлов.
