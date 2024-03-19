@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 import static nd.jar.neuralpoker.common.Common.*;
-import static nd.jar.neuralpoker.prepare.Utils.*;
 
 public class PrepareData {
     public static void main(String[] args) throws IOException {
@@ -53,17 +52,17 @@ public class PrepareData {
     private static void processFile(File file, PrintWriter suitsPw, PrintWriter numsPw) throws IOException {
         final var image = ImageIO.read(file);
         for (int i = 0; i < topLeftCornerX.length; i++) {
-            var name = getCardName(file.getName(), i);
+            var name = CardName.fromNthFilename(file.getName(), i);
             final var suitBitset = getNthSizedBitSet(image, i, suitCoordinates, suitSize);
-            System.out.println(toAscii(suitBitset));
-            suitsPw.println(toCsv(suitBitset) +"\t"+ name.suit());
+            System.out.println(BitSetUtils.toAscii(suitBitset));
+            suitsPw.println(BitSetUtils.toCsv(suitBitset) +"\t"+ name.suit());
 
-            if (name == EMPTY) {
+            if (name == CardName.EMPTY) {
                 continue;
             }
             final var numBitset = getNthSizedBitSet(image, i, numCoordinates, numSize);
-            System.out.println(toAscii(numBitset));
-            numsPw.println(toCsv(numBitset) +"\t"+ name.num());
+            System.out.println(BitSetUtils.toAscii(numBitset));
+            numsPw.println(BitSetUtils.toCsv(numBitset) +"\t"+ name.num());
         }
     }
 }
