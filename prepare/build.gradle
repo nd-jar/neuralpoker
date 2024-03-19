@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group = 'org.example'
+group = 'nd.jar.neuralpoker.prepare'
 
 repositories {
     mavenCentral()
